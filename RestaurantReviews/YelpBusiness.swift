@@ -57,10 +57,10 @@ class YelpBusiness: NSObject, JSONDecodable {
         self.isClosed = isClosed
         self.url = url
         self.reviewCount = reviewCount
-        self.categories = categoriesDict.flatMap { YelpCategory(json: $0) }
+        self.categories = categoriesDict.compactMap { YelpCategory(json: $0) }
         self.rating = rating
         self.location = coordinates
-        self.transactions = transactionValues.flatMap { YelpTransaction(rawValue: $0) }
+        self.transactions = transactionValues.compactMap { YelpTransaction(rawValue: $0) }
         self.address = address
         self.phone = phone
         self.displayPhone = displayPhone

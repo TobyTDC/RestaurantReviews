@@ -32,7 +32,7 @@ A simple iOS web view controller that allows you to display the login/authorizat
 open class OAuth2WebViewController: UIViewController, WKNavigationDelegate {
 	
 	/// Handle to the OAuth2 instance in play, only used for debug lugging at this time.
-	var oauth: OAuth2?
+	var oauth: OAuth2Base?
 	
 	/// The URL to load on first show.
 	open var startURL: URL? {
@@ -46,13 +46,13 @@ open class OAuth2WebViewController: UIViewController, WKNavigationDelegate {
 	/// The URL string to intercept and respond to.
 	var interceptURLString: String? {
 		didSet(oldURL) {
-			if nil != interceptURLString {
-				if let url = URL(string: interceptURLString!) {
+			if let interceptURLString = interceptURLString {
+				if let url = URL(string: interceptURLString) {
 					interceptComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
 				}
 				else {
 					oauth?.logger?.debug("OAuth2", msg: "Failed to parse URL \(interceptURLString), discarding")
-					interceptURLString = nil
+					self.interceptURLString = nil
 				}
 			}
 			else {
@@ -66,7 +66,7 @@ open class OAuth2WebViewController: UIViewController, WKNavigationDelegate {
 	/// that you've intercepted the URL.
 	var onIntercept: ((URL) -> Bool)?
 	
-	/// Called when the web view is about to be dismissed. The Bool indicates whether the request was (user-)cancelled.
+	/// Called when the web view is about to be dismissed. The Bool indicates whether the request was (user-)canceled.
 	var onWillDismiss: ((_ didCancel: Bool) -> Void)?
 	
 	/// Assign to override the back button, shown when it's possible to go back in history. Will adjust target/action accordingly.
@@ -115,7 +115,7 @@ open class OAuth2WebViewController: UIViewController, WKNavigationDelegate {
 		// create a web view
 		let web = WKWebView()
 		web.translatesAutoresizingMaskIntoConstraints = false
-		web.scrollView.decelerationRate = UIScrollViewDecelerationRateNormal
+		web.scrollView.decelerationRate = UIScrollView.DecelerationRate.normal
 		web.navigationDelegate = self
 		
 		view.addSubview(web)
@@ -167,11 +167,11 @@ open class OAuth2WebViewController: UIViewController, WKNavigationDelegate {
 		let _ = webView?.load(URLRequest(url: url))
 	}
 	
-	func goBack(_ sender: AnyObject?) {
+	@objc func goBack(_ sender: AnyObject?) {
 		let _ = webView?.goBack()
 	}
 	
-	func cancel(_ sender: AnyObject?) {
+	@objc func cancel(_ sender: AnyObject?) {
 		dismiss(asCancel: true, animated: (nil != sender) ? true : false)
 	}
 	
@@ -209,6 +209,7 @@ open class OAuth2WebViewController: UIViewController, WKNavigationDelegate {
 				else {
 					decisionHandler(.allow)
 				}
+				return
 			}
 		}
 		decisionHandler(.allow)
@@ -249,5 +250,14 @@ open class OAuth2WebViewController: UIViewController, WKNavigationDelegate {
 		}
 	}
 }
+
+/// Swift < 4.2 support
+#if !(swift(>=4.2))
+private extension UIScrollView {
+	enum DecelerationRate {
+		static let normal = UIScrollViewDecelerationRateNormal
+	}
+}
+#endif
 
 #endif

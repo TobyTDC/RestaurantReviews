@@ -3,7 +3,8 @@
   "iOS" : [
     {
       "name" : "Locksmith",
-      "hash" : "d61dbe12da5b5b6731c97c3f9ef6cf1b9c225272675036557df180fa74a608b9"
+      "hash" : "9531695c546139fea594e9e42a8accf93e87a7a992d841cca9a07c8eb75399d8",
+      "swiftToolchainVersion" : "5.1.3 (swiftlang-1100.0.282.1 clang-1100.0.33.15)"
     }
   ]
 }

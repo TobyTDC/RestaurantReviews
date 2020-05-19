@@ -59,6 +59,6 @@ extension BusinessHours: JSONDecodable {
         
         self.type = hoursType
         self.isOpenNow = isOpenNow
-        self.schedule = openHours.flatMap { BusinessHours.Schedule(json: $0) }
+        self.schedule = openHours.compactMap { BusinessHours.Schedule(json: $0) }
     }
 }

@@ -57,6 +57,7 @@ open class OAuth2: OAuth2Base {
 	- client_secret (String), usually only needed for code grant
 	- authorize_uri (URL-String)
 	- token_uri (URL-String), if omitted the authorize_uri will be used to obtain tokens
+	- refresh_uri (URL-String), if omitted the token_uri will be used to obtain tokens
 	- redirect_uris (Array of URL-Strings)
 	- scope (String)
 	
@@ -72,6 +73,7 @@ open class OAuth2: OAuth2Base {
 	- secret_in_body (Bool, false by default, forces the flow to use the request body for the client secret)
 	- parameters ([String: String], custom request parameters to be added during authorization)
 	- token_assume_unexpired (Bool, true by default, whether to use access tokens that do not come with an "expires_in" parameter)
+	- use_pkce (Bool, false by default)
 	
 	- verbose (bool, false by default, applies to client logging)
 	*/
@@ -96,7 +98,7 @@ open class OAuth2: OAuth2Base {
 	
 	- parameter params:   Optional key/value pairs to pass during authorization and token refresh
 	- parameter callback: The callback to call when authorization finishes (parameters will be non-nil but may be an empty dict), fails or
-	                      is cancelled (error will be non-nil, e.g. `.requestCancelled` if auth was aborted)
+	                      is canceled (error will be non-nil, e.g. `.requestCancelled` if auth was aborted)
 	*/
 	public final func authorize(params: OAuth2StringDict? = nil, callback: @escaping ((OAuth2JSON?, OAuth2Error?) -> Void)) {
 		if isAuthorizing {
@@ -106,9 +108,12 @@ open class OAuth2: OAuth2Base {
 		
 		didAuthorizeOrFail = callback
 		logger?.debug("OAuth2", msg: "Starting authorization")
-		tryToObtainAccessTokenIfNeeded(params: params) { successParams in
+		tryToObtainAccessTokenIfNeeded(params: params) { successParams, error in
 			if let successParams = successParams {
 				self.didAuthorize(withParameters: successParams)
+			}
+			else if let error = error {
+				self.didFail(with: error)
 			}
 			else {
 				self.registerClientIfNeeded() { json, error in
@@ -137,7 +142,7 @@ open class OAuth2: OAuth2Base {
 	- parameter from:     The context to start authorization from, depends on platform (UIViewController or NSWindow, see `authorizeContext`)
 	- parameter params:   Optional key/value pairs to pass during authorization
 	- parameter callback: The callback to call when authorization finishes (parameters will be non-nil but may be an empty dict), fails or
-	                      is cancelled (error will be non-nil, e.g. `.requestCancelled` if auth was aborted)
+	                      is canceled (error will be non-nil, e.g. `.requestCancelled` if auth was aborted)
 	*/
 	open func authorizeEmbedded(from context: AnyObject, params: OAuth2StringDict? = nil, callback: @escaping ((_ authParameters: OAuth2JSON?, _ error: OAuth2Error?) -> Void)) {
 		if isAuthorizing {		// `authorize()` will check this, but we want to exit before changing `authConfig`
@@ -178,22 +183,29 @@ open class OAuth2: OAuth2Base {
 	- parameter callback: The callback to call once the client knows whether it has an access token or not; if `success` is true an
 	                      access token is present
 	*/
-	open func tryToObtainAccessTokenIfNeeded(params: OAuth2StringDict? = nil, callback: @escaping ((OAuth2JSON?) -> Void)) {
+	open func tryToObtainAccessTokenIfNeeded(params: OAuth2StringDict? = nil, callback: @escaping ((OAuth2JSON?, OAuth2Error?) -> Void)) {
 		if hasUnexpiredAccessToken() {
 			logger?.debug("OAuth2", msg: "Have an apparently unexpired access token")
-			callback(OAuth2JSON())
+			callback(OAuth2JSON(), nil)
 		}
 		else {
 			logger?.debug("OAuth2", msg: "No access token, checking if a refresh token is available")
 			doRefreshToken(params: params) { successParams, error in
 				if let successParams = successParams {
-					callback(successParams)
+					callback(successParams, nil)
 				}
 				else {
+					var returnedError: OAuth2Error? = nil
 					if let err = error {
-						self.logger?.debug("OAuth2", msg: "\(err)")
+						self.logger?.debug("OAuth2", msg: "Error refreshing token: \(err)")
+						switch err {
+						case .noRefreshToken, .noClientId, .unauthorizedClient:
+							returnedError = nil
+						default:
+							returnedError = err
+						}
 					}
-					callback(nil)
+					callback(nil, returnedError)
 				}
 			}
 		}
@@ -275,6 +287,11 @@ open class OAuth2: OAuth2Base {
 		if clientConfig.safariCancelWorkaround {
 			req.params["swa"] = "\(Date.timeIntervalSinceReferenceDate)" // Safari issue workaround
 		}
+		if clientConfig.useProofKeyForCodeExchange {
+			context.generateCodeVerifier()
+			req.params["code_challenge"] = context.codeChallenge()
+			req.params["code_challenge_method"] = context.codeChallengeMethod
+		}
 		req.add(params: params)
 		
 		return req
@@ -328,7 +345,7 @@ open class OAuth2: OAuth2Base {
 			throw OAuth2Error.noRefreshToken
 		}
 		
-		let req = OAuth2AuthRequest(url: (clientConfig.tokenURL ?? clientConfig.authorizeURL))
+		let req = OAuth2AuthRequest(url: (clientConfig.refreshURL ?? clientConfig.tokenURL ?? clientConfig.authorizeURL))
 		req.params["grant_type"] = "refresh_token"
 		req.params["refresh_token"] = refreshToken
 		if let clientId = clientId {
@@ -387,7 +404,7 @@ open class OAuth2: OAuth2Base {
 	- parameter callback: The callback to call on the main thread; if both json and error is nil no registration was attempted; error is nil
 	                      on success
 	*/
-	func registerClientIfNeeded(callback: @escaping ((OAuth2JSON?, OAuth2Error?) -> Void)) {
+	public func registerClientIfNeeded(callback: @escaping ((OAuth2JSON?, OAuth2Error?) -> Void)) {
 		if nil != clientId || !type(of: self).clientIdMandatory {
 			callOnMainThread() {
 				callback(nil, nil)

@@ -29,7 +29,7 @@ class YelpClient: APIClient {
         
         fetch(with: request, parse: { json -> [YelpBusiness] in
             guard let businesses = json["businesses"] as? [[String: Any]] else { return [] }
-            return businesses.flatMap { YelpBusiness(json: $0) }
+            return businesses.compactMap { YelpBusiness(json: $0) }
             
         }, completion: completion)
         
@@ -61,7 +61,7 @@ class YelpClient: APIClient {
         fetch(with: request, parse: {
             json -> [YelpReview] in
             guard let reviews = json["reviews"] as? [[String: Any]] else { return [] }
-            return reviews.flatMap {
+            return reviews.compactMap {
                 YelpReview(json:  $0)
             }
         }, completion: completion)

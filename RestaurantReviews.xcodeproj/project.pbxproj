@@ -3,10 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0FE25AEE2474964700D83C34 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 984FE64B1FE75CAC00C73A7C /* MapKit.framework */; };
+		0FE25AF02474964A00D83C34 /* OAuth2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98A4CA691FE6157400B415EB /* OAuth2.framework */; };
+		0FE25AF3247497A900D83C34 /* Locksmith.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98A4CA6E1FE6242300B415EB /* Locksmith.framework */; };
 		97D629DA1EC23110007BE0CE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D629D91EC23110007BE0CE /* AppDelegate.swift */; };
 		97D629DC1EC23110007BE0CE /* YelpSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D629DB1EC23110007BE0CE /* YelpSearchController.swift */; };
 		97D629DF1EC23110007BE0CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97D629DD1EC23110007BE0CE /* Main.storyboard */; };
@@ -31,10 +34,7 @@
 		97D62A171EC245BB007BE0CE /* ReviewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D62A161EC245BB007BE0CE /* ReviewCellViewModel.swift */; };
 		984FE6481FE7484700C73A7C /* YelpBusinessDetailOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984FE6471FE7484700C73A7C /* YelpBusinessDetailOperation.swift */; };
 		984FE64A1FE756D800C73A7C /* YelpBusinessReviewsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984FE6491FE756D800C73A7C /* YelpBusinessReviewsOperation.swift */; };
-		984FE64C1FE75CAC00C73A7C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 984FE64B1FE75CAC00C73A7C /* MapKit.framework */; };
-		98A4CA6A1FE6157400B415EB /* OAuth2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98A4CA691FE6157400B415EB /* OAuth2.framework */; };
 		98A4CA6D1FE61CA500B415EB /* YelpAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A4CA6C1FE61CA500B415EB /* YelpAccount.swift */; };
-		98A4CA6F1FE6242300B415EB /* Locksmith.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98A4CA6E1FE6242300B415EB /* Locksmith.framework */; };
 		98A4CA711FE62B5F00B415EB /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A4CA701FE62B5F00B415EB /* LocationManager.swift */; };
 		98A4CA731FE6EC8A00B415EB /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A4CA721FE6EC8A00B415EB /* APIClient.swift */; };
 		98A4CA751FE6EEA300B415EB /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A4CA741FE6EEA300B415EB /* Result.swift */; };
@@ -83,9 +83,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98A4CA6A1FE6157400B415EB /* OAuth2.framework in Frameworks */,
-				984FE64C1FE75CAC00C73A7C /* MapKit.framework in Frameworks */,
-				98A4CA6F1FE6242300B415EB /* Locksmith.framework in Frameworks */,
+				0FE25AF3247497A900D83C34 /* Locksmith.framework in Frameworks */,
+				0FE25AF02474964A00D83C34 /* OAuth2.framework in Frameworks */,
+				0FE25AEE2474964700D83C34 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,8 +240,8 @@
 				};
 			};
 			buildConfigurationList = 97D629D11EC23110007BE0CE /* Build configuration list for PBXProject "RestaurantReviews" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			compatibilityVersion = "Xcode 11.0";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -430,7 +430,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -445,10 +446,13 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = RestaurantReviews/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = tobytang;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -462,10 +466,13 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = RestaurantReviews/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = tobytang;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

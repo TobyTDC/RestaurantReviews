@@ -18,9 +18,9 @@ class YelpBusinessDetailController: UITableViewController {
     @IBOutlet weak var currentHoursStatusLabel: UILabel! {
         didSet {
             if currentHoursStatusLabel.text == "Open" {
-                currentHoursStatusLabel.textColor = UIColor(colorLiteralRed: 2/255.0, green: 192/255.0, blue: 97/255.0, alpha: 1.0)
+                currentHoursStatusLabel.textColor = UIColor(red: 2/255.0, green: 192/255.0, blue: 97/255.0, alpha: 1.0)
             } else {
-                currentHoursStatusLabel.textColor = UIColor(colorLiteralRed: 209/255.0, green: 47/255.0, blue: 27/255.0, alpha: 1.0)
+                currentHoursStatusLabel.textColor = UIColor(red: 209/255.0, green: 47/255.0, blue: 27/255.0, alpha: 1.0)
             }
         }
     }

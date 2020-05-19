@@ -1,9 +1,10 @@
 {
-  "commitish" : "3.0.3",
+  "commitish" : "5.2.0",
   "iOS" : [
     {
       "name" : "OAuth2",
-      "hash" : "843313d881b890512dc1d0dab611f9f769217f9ff92105887eb2652228deefe9"
+      "hash" : "0bbd3f6c3a4b9de9f4cf2747f3567b311f7e02aead6d5247dcc83b992652798e",
+      "swiftToolchainVersion" : "5.1.3 (swiftlang-1100.0.282.1 clang-1100.0.33.15)"
     }
   ]
 }

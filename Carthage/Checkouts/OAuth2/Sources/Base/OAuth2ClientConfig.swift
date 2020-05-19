@@ -28,6 +28,9 @@ open class OAuth2ClientConfig {
 	
 	/// The URL where we can exchange a code for a token.
 	public final var tokenURL: URL?
+
+	/// The URL where we can refresh an access token using a refresh token.
+	public final var refreshURL: URL?
 	
 	/// Where a logo/icon for the app can be found.
 	public final var logoURL: URL?
@@ -83,10 +86,16 @@ open class OAuth2ClientConfig {
 	/// http://stackoverflow.com/questions/27739442/ios-safari-does-not-recognize-url-schemes-after-user-cancels
 	/// https://community.fitbit.com/t5/Web-API/oAuth2-authentication-page-gives-me-a-quot-Cannot-Open-Page-quot-error/td-p/1150391
 	///
-	/// Toggling `safariCancelWorkaround` to true will send an extra get-paramter to make the url unique, thus it will ask again for the new
+	/// Toggling `safariCancelWorkaround` to true will send an extra get-parameter to make the url unique, thus it will ask again for the new
 	/// url.
 	open var safariCancelWorkaround = false	
 	
+	/// Use Proof Key for Code Exchange (PKCE)
+	///
+	/// See https://tools.ietf.org/html/rfc7636
+	///
+	open var useProofKeyForCodeExchange = false
+
 	/**
 	Initializer to initialize properties from a settings dictionary.
 	*/
@@ -105,6 +114,9 @@ open class OAuth2ClientConfig {
 		// token, registration and logo URLs
 		if let token = settings["token_uri"] as? String {
 			tokenURL = URL(string: token)
+		}
+		if let refresh = settings["refresh_uri"] as? String {
+			refreshURL = URL(string: refresh)
 		}
 		if let registration = settings["registration_uri"] as? String {
 			registrationURL = URL(string: registration)
@@ -139,6 +151,11 @@ open class OAuth2ClientConfig {
 		if let assume = settings["token_assume_unexpired"] as? Bool {
 			accessTokenAssumeUnexpired = assume
 		}
+		
+		if let usePKCE = settings["use_pkce"] as? Bool {
+			useProofKeyForCodeExchange = usePKCE
+		}
+		
 	}
 	
 	

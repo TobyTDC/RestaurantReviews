@@ -4,6 +4,96 @@ Changelog
 Version numbering represents the Swift version, plus a running number representing updates, fixes and new features at the same time.
 You can also refer to commit logs to get details on what was implemented, fixed and improved.
 
+### 5.2.0
+
+- Separate setting for `refresh_uri`.  
+  [fotiDim](https://github.com/fotiDim)
+  [#330](https://github.com/p2/OAuth2/pull/330)
+- Add Mac Catalyst support.  
+  [telipskiy](https://github.com/telipskiy)
+  [#328](https://github.com/p2/OAuth2/pull/328)
+- Add PKCE support.  
+  [larrybrunet](https://github.com/larrybrunet)
+  [#324](https://github.com/p2/OAuth2/pull/324)
+
+### 5.1.0
+
+- Update Swift package configuration for use with XCode 11.
+
+### 5.0.0
+
+- Swift 5.0 support.  
+  [drdavec](https://github.com/drdavec)
+  [#313](https://github.com/p2/OAuth2/pull/313)
+- Add support for Authentication Session.  
+  [blork](https://github.com/blork)
+  [#305](https://github.com/p2/OAuth2/pull/305)
+
+### 4.2.0
+
+- Swift 4.2 support.  
+  [djbe](https://github.com/djbe)
+  [#273](https://github.com/p2/OAuth2/pull/273)
+- Fix crash due to memory ownership.  
+  [foldericon](https://github.com/foldericon)
+  [#271](https://github.com/p2/OAuth2/pull/271)
+- Added an Auth2 implicit grant variation for requests that return parameters in the query instead of the fragment.  
+  [tschmitz](https://github.com/tschmitz)
+  [#262](https://github.com/p2/OAuth2/pull/262)
+- Fix some Swift 4 warnings.  
+  [everlof](https://github.com/everlof)
+  [#251](https://github.com/p2/OAuth2/pull/251)
+- Pass back a strongly typed `OAuth2Error` when possible (along with `error_description`). Also added an `invalidGrant` error.  
+  [sebskuse](https://github.com/sebskuse)
+  [#248](https://github.com/p2/OAuth2/pull/248)
+- You can now implement your own custom loggers.  
+  [p2](https://github.com/p2)
+  [#236](https://github.com/p2/OAuth2/pull/236)
+- Fixed parsing errors with empty descriptions.  
+  [p2](https://github.com/p2)
+  [#247](https://github.com/p2/OAuth2/pull/247)
+- Fix the appearance and location of the `Cancel` button on macOS.  
+  [kengruven](https://github.com/kengruven)
+  [#246](https://github.com/p2/OAuth2/pull/246)
+
+### 4.0.1
+
+- Correct the ACL for `updateFromKeychainItems` to `open`.  
+  [JohnTheBastard](https://github.com/JohnTheBastard)
+  [#239](https://github.com/p2/OAuth2/pull/239)
+- Fixed unauthorized error when refreshing a token.  
+  [amaurydavid](https://github.com/amaurydavid)
+  [#237](https://github.com/p2/OAuth2/pull/237)
+- Fixed an exception due to the web policy completion handler being called twice.  
+  [Kashkovsky](https://github.com/Kashkovsky)
+  [#235](https://github.com/p2/OAuth2/pull/235)
+- Bubble errors up from a token fetch to the client.  
+  [dhardiman](https://github.com/dhardiman)
+  [#232](https://github.com/p2/OAuth2/pull/232)
+  [#234](https://github.com/p2/OAuth2/pull/234)
+
+### 4.0.0
+
+- Update to Swift 4.  
+  [paulw11](https://github.com/paulw11)
+  [#228](https://github.com/p2/OAuth2/pull/228)
+- Fix an assertion error in Xcode 9.  
+  [markmarkswell](https://github.com/markmarkswell)
+  [#227](https://github.com/p2/OAuth2/pull/227)
+- Remove the dependency on the system `sharedApplication` property to support use in extensions.  
+  [robertbarclay](https://github.com/robertbarclay)
+  [#212](https://github.com/p2/OAuth2/pull/212)
+- Changed the ACL of `customAuthorizer` from `internal` to `open`.  
+  [amaurydavid](https://github.com/amaurydavid)
+  [#203](https://github.com/p2/OAuth2/pull/203)
+- Corrected some typos in the codebase and documentation.  
+  [Lutzifer](https://github.com/Lutzifer)
+  [#199](https://github.com/p2/OAuth2/pull/199)
+- Fixed some warnings with String interpolation.  
+  [paulw11](https://github.com/paulw11)
+  [jakepetroules](https://github.com/jakepetroules)
+  [#195](https://github.com/p2/OAuth2/pull/195)
+  [#204](https://github.com/p2/OAuth2/pull/204)
 
 ### 3.0.3
 
@@ -139,7 +229,7 @@ You can also refer to commit logs to get details on what was implemented, fixed 
 
 ### 2.0.2
 
-- Fix issue #53, not detecting cancelling the `SFSafariViewController` by the user
+- Fix issue #53, not detecting canceling the `SFSafariViewController` by the user
 
 
 ### 2.0.1

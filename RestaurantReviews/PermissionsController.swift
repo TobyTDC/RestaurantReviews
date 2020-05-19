@@ -13,9 +13,10 @@ import CoreLocation
 class PermissionsController: UIViewController, LocationPermissionDelegate {
     
     let oauth = OAuth2ClientCredentials(settings: [
-        "client_id": "dBnT9vRSuOtj3zLH1nCrOw",
-        "client_secret": "p4nKYJeFGWewwCQS1T5WsyNT9d3E1Z3pQ6DfidR7JQXb9EDx0UZUK7lRwnFPy8RE",
+        "client_id": "pMvYQnxKL-ekWy1KFHDOSw",
+        "client_secret": "koKb4NakagRoUZ2oYJGs7jek_ngwP37LjEm3WgYiutuC2sKAnEnX66hUA7QYnvr8-xu_pXEf6nwHlNx-Jj2mm7ttdt1A1_3RSsYcaZorXsUjUOaGAg9U5_iiV2XEXnYx",
         "authorize_uri": "https://api.yelp.com/oauth2/token",
+        "token_type": "Bearer",
         "secret_in_body": true,
         "keychain": false
         ])
@@ -37,8 +38,8 @@ class PermissionsController: UIViewController, LocationPermissionDelegate {
         
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = UIColor(colorLiteralRed: 62/255.0, green: 71/255.0, blue: 79/255.0, alpha: 1.0)
-        button.setTitleColor(UIColor(colorLiteralRed: 178/255.0, green: 187/255.0, blue: 185/255.0, alpha: 1.0), for: .disabled)
+        button.backgroundColor = UIColor(red: 62/255.0, green: 71/255.0, blue: 79/255.0, alpha: 1.0)
+        button.setTitleColor(UIColor(red: 178/255.0, green: 187/255.0, blue: 185/255.0, alpha: 1.0), for: .disabled)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 5
         button.clipsToBounds = true
@@ -55,8 +56,8 @@ class PermissionsController: UIViewController, LocationPermissionDelegate {
         button.addTarget(self, action: #selector(PermissionsController.requestOAuthToken), for: .touchUpInside)
         
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = UIColor(colorLiteralRed: 62/255.0, green: 71/255.0, blue: 79/255.0, alpha: 1.0)
-        button.setTitleColor(UIColor(colorLiteralRed: 178/255.0, green: 187/255.0, blue: 185/255.0, alpha: 1.0), for: .disabled)
+        button.backgroundColor = UIColor(red: 62/255.0, green: 71/255.0, blue: 79/255.0, alpha: 1.0)
+        button.setTitleColor(UIColor(red: 178/255.0, green: 187/255.0, blue: 185/255.0, alpha: 1.0), for: .disabled)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 5
         button.clipsToBounds = true
@@ -87,7 +88,7 @@ class PermissionsController: UIViewController, LocationPermissionDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor(colorLiteralRed: 95/255.0, green: 207/255.0, blue: 128/255.0, alpha: 1.0)
+        view.backgroundColor = UIColor(red: 95/255.0, green: 207/255.0, blue: 128/255.0, alpha: 1.0)
     }
     
 
@@ -120,7 +121,7 @@ class PermissionsController: UIViewController, LocationPermissionDelegate {
         
     }
     
-    func requestLocationPermissions() {
+    @objc func requestLocationPermissions() {
         do {
             try locationManager.requestLocationAuthorization()
         } catch LocationError.disallowedByUser {
@@ -130,7 +131,7 @@ class PermissionsController: UIViewController, LocationPermissionDelegate {
         }
     }
     
-    func requestOAuthToken() {
+    @objc func requestOAuthToken() {
         oauth.authorize{
             authParams, error in
             if let params = authParams{
@@ -149,7 +150,7 @@ class PermissionsController: UIViewController, LocationPermissionDelegate {
         
     }
     
-    func dismissPermissions() {
+    @objc func dismissPermissions() {
         dismiss(animated: true, completion: nil)
     }
     

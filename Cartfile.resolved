@@ -1,2 +1,2 @@
 github "matthewpalmer/Locksmith" "4.0.0"
-github "p2/OAuth2" "3.0.3"
+github "p2/OAuth2" "5.2.0"

@@ -69,10 +69,10 @@ Class representing an OAuth2 authorization request that can be used to create NS
 open class OAuth2AuthRequest {
 	
 	/// The url of the receiver. Queries may by added by parameters specified on `params`.
-	open let url: URL
+	public let url: URL
 	
 	/// The HTTP method.
-	open let method: OAuth2HTTPMethod
+	public let method: OAuth2HTTPMethod
 	
 	/// The content type that will be specified. Defaults to `wwwForm`.
 	open var contentType = OAuth2HTTPContentType.wwwForm
@@ -245,7 +245,7 @@ public struct OAuth2RequestParams {
 	/// The parameters to be used.
 	public private(set) var params: OAuth2StringDict? = nil
 	
-	/** Designated initalizer. */
+	/** Designated initializer. */
 	public init() {  }
 	
 	public subscript(key: String) -> String? {

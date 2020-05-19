@@ -4,15 +4,14 @@ OAuth2
 [![Build Status](https://travis-ci.org/p2/OAuth2.svg?branch=master)](https://travis-ci.org/p2/OAuth2)
 [![License](https://img.shields.io/:license-apache-blue.svg)](LICENSE.txt)
 
-OAuth2 frameworks for **macOS**, **iOS** and **tvOS** written in Swift 3.0.
+OAuth2 frameworks for **macOS**, **iOS** and **tvOS** written in Swift 5.0.
 
 - [⤵️ Installation](#installation)
 - [🛠 Usage](#usage)
 - [🖥 Sample macOS app][sample] (with data loader examples)
-- [📱 Sample iOS app](https://github.com/p2/OAuth2PodApp) (using CocoaPods)
 - [📖 Technical Documentation](https://p2.github.io/OAuth2)
 
-OAuth2 requires Xcode 8, the built framework can be used on **OS X 10.9** or **iOS 8** and later.
+OAuth2 requires Xcode 10.2, the built framework can be used on **OS X 10.11** or **iOS 8** and later.
 Happy to accept pull requests, please see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ### Swift Version
@@ -25,7 +24,7 @@ Code compatible with brand new Swift versions are to be found on a separate feat
 Usage
 -----
 
-To use OAuth2 in your own code, start with `import OAuth2` (use `p2_OAuth2` if you installed _p2.OAuth2_ via CocoaPods) in your source files.
+To use OAuth2 in your own code, start with `import OAuth2` in your source files.
 
 In OAuth2 there are [**different kinds of _flows_**](https://tools.ietf.org/html/rfc6749#page-2).
 This library supports all of them, make sure you're using the correct one for your use-case and authorization server.
@@ -65,6 +64,8 @@ Set this:
 oauth2.authConfig.authorizeEmbedded = true
 oauth2.authConfig.authorizeContext = <# your UIViewController / NSWindow #>
 ```
+
+Need to specify a separate refresh token URI? You can set the `refresh_uri` in the Settings Dictionary. If specified the library will refresh access tokens using the `refresh_uri` you specified, otherwise it will use the `token_uri`.
 
 Need to debug? Use a `.debug` or even a `.trace` logger:
 
@@ -146,7 +147,7 @@ oauth2.authorize() { authParameters, error in
         print("Authorized! Additional parameters: \(params)")
     }
     else {
-        print("Authorization was cancelled or went wrong: \(error)")   // error will not be nil
+        print("Authorization was canceled or went wrong: \(error)")   // error will not be nil
     }
 }
 
@@ -368,7 +369,7 @@ The main configuration you'll use with `oauth2.authConfig` is whether or not to 
 
     oauth2.authConfig.authorizeEmbedded = true
 
-Similarly, if you want to take care of dismissing the login screen yourself:
+Similarly, if you want to take care of dismissing the login screen yourself (not possible with the newer authorization sessions mentioned below):
 
     oauth2.authConfig.authorizeEmbeddedAutoDismiss = false
 
@@ -394,6 +395,10 @@ Similar is how you specify custom HTTP headers:
     "headers": ["Accept": "application/json, text/plain"]
 
 Starting with version 2.0.1 on iOS 9, `SFSafariViewController` will be used for embedded authorization.
+Starting after version 4.2, on iOS 11 (`SFAuthenticationSession`) and iOS 12 (`ASWebAuthenticationSession`), you can opt-in to these newer authorization session view controllers:
+
+    oauth2.authConfig.ui.useAuthenticationSession = true
+
 To revert to the old custom `OAuth2WebViewController`:
 
     oauth2.authConfig.ui.useSafariView = false
@@ -402,6 +407,7 @@ To customize the _go back_ button when using `OAuth2WebViewController` on iOS 8 
 
     oauth2.authConfig.ui.backButton = <# UIBarButtonItem(...) #>
 
+See below for settings about [the keychain](#keychain) and [PKCE](#pkce).
 
 Usage with Alamofire
 --------------------
@@ -448,12 +454,18 @@ dynreg.register(client: oauth2) { params, error in
 }
 ```
 
+PKCE
+----
+
+PKCE support is controlled by the `useProofKeyForCodeExchange` property, and the `use_pkce` key in the settings dictionary.
+It is disabled by default. When enabled, a new code verifier string is generated for every authorization request. 
+
 
 Keychain
 --------
 
 This framework can transparently use the iOS and macOS keychain.
-It is controlled by the `useKeychain` property, which can be disabled during initialization with the "keychain" setting.
+It is controlled by the `useKeychain` property, which can be disabled during initialization with the `keychain` settings dictionary key.
 Since this is **enabled by default**, if you do _not_ turn it off during initialization, the keychain will be queried for tokens and client credentials related to the authorization URL.
 If you turn it off _after_ initialization, the keychain will be queried for existing tokens, but new tokens will not be written to the keychain.
 
@@ -463,21 +475,32 @@ If you have dynamically registered your client and want to start anew, you can c
 Ideally, access tokens get delivered with an "expires_in" parameter that tells you how long the token is valid.
 If it is missing the framework will still use those tokens if one is found in the keychain and not re-perform the OAuth dance.
 You will need to intercept 401s and re-authorize if an access token has expired but the framework has still pulled it from the keychain.
-This behavior can be turned off by supplying "token_assume_unexpired": false in settings or setting `clientConfig.accessTokenAssumeUnexpired` to false.
+This behavior can be turned off by supplying `token_assume_unexpired: false` in settings or setting `clientConfig.accessTokenAssumeUnexpired` to false.
 
+These are the settings dictionary keys you can use for more control:
+
+- `keychain`: a bool on whether to use keychain or not, true by default
+- `keychain_access_mode`: a string value for keychain kSecAttrAccessible attribute, "kSecAttrAccessibleWhenUnlocked" by default, you can change this to e.g. "kSecAttrAccessibleAfterFirstUnlock" if you need the tokens to be available when the phone is locked.
+- `keychain_access_group`: a string value for keychain kSecAttrAccessGroup attribute, nil by default
+- `keychain_account_for_client_credentials`: the name to use to identify client credentials in the keychain, "clientCredentials" by default
+- `keychain_account_for_tokens`: the name to use to identify the tokens in the keychain, "currentTokens" by default
 
 Installation
 ------------
 
-You can use _git_, _Carthage_ and even _CocoaPods_ to install the framework.
-The preferred way is to use _git_ directly or _Carthage_.
+You can use the _Swift Package Manager_, _git_ or _Carthage_.
+The preferred way is to use the _Swift Package Manager_.
+
+#### Swift Package Manager
+
+In Xcode 11 and newer, choose "File" from the Xcode Menu, then "Swift Packages" » "Add Package Dependency..." and paste the URL of this repo: `https://github.com/p2/OAuth2.git`. Pick a version and Xcode should do the rest.
 
 #### Carthage
 
 Installation via Carthage is easy enough:
 
 ```ruby
-github "p2/OAuth2" ~> 3.0
+github "p2/OAuth2" ~> 4.2
 ```
 
 #### git
@@ -502,28 +525,6 @@ These three steps are needed to:
 2. Link the framework into your app
 3. Embed the framework in your app when distributing
 
-#### CocoaPods
-
-CocoaPods was nice back in the days for Obj-C and static libraries, but is overkill in the modern days of Swift and iOS frameworks.
-You can however still use OAuth2 with Cocoapods.
-
-Add a `Podfile` that contains at least the following information to the root of your app project, then do `pod install`.
-If you're unfamiliar with CocoaPods, read [using CocoaPods](http://guides.cocoapods.org/using/using-cocoapods.html).
-
-```ruby
-platform :ios, '8.0'          # or platform :osx, '10.9'
-use_frameworks!
-target `YourApp` do
-  pod 'p2.OAuth2', '~> 3.0'
-end
-```
-
-If you want the bleeding edge, use this command for CocoaPods instead – note the `submodules` flag: without it the library will not compile.
-
-```ruby
-pod 'p2.OAuth2', :git => 'https://github.com/p2/OAuth2', :submodules => true
-```
-
 
 License
 -------
@@ -533,4 +534,3 @@ Since there is no `NOTICE` file there is nothing that you have to include in you
 
 
 [sample]: https://github.com/p2/OAuth2App
-
